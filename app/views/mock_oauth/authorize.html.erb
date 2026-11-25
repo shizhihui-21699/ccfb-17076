@@ -1,0 +1,13 @@
+<h2>Mock <%= @provider %> 授权页（仅开发环境）</h2>
+<p>选择一个预置身份完成授权：</p>
+<ul>
+  <% @accounts.each do |uid| %>
+    <li>
+      <form action="<%= oauth_callback_url(@provider) %>" method="get">
+        <input type="hidden" name="state" value="<%= params[:state] %>">
+        <input type="hidden" name="code" value="<%= MockOAuthRegistry.instance.issue_code(@provider, uid) %>">
+        <button type="submit">以 <%= uid %> 身份授权</button>
+      </form>
+    </li>
+  <% end %>
+</ul>

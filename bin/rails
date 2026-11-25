@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+# 本机 gem 可执行文件不在 PATH，按备忘用 Gem.bin_path 写 binstub
+require_relative '../config/boot'
+load Gem.bin_path('railties', 'rails')

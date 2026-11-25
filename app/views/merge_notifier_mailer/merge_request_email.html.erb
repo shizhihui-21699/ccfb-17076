@@ -1,0 +1,26 @@
+<p>你好，</p>
+
+<p>有人使用 <strong><%= @merge_request.provider %></strong> 账号请求登录本站，并希望与你的账号
+（<%= @user.email %>）合并。</p>
+
+<ul>
+  <li>对方提供的邮箱：<strong><%= @merge_request.provider_email %></strong></li>
+  <li>该邮箱在第三方平台的验证状态：
+    <% if @merge_request.provider_email_verified? %>
+      <strong style="color:#b00">已验证（仍需你本人确认才会合并）</strong>
+    <% else %>
+      <strong style="color:#b00">未验证 / 平台不提供验证状态 —— 这正是冒名登录的典型特征，
+        若非你本人操作，请直接拒绝</strong>
+    <% end %>
+  </li>
+</ul>
+
+<p><strong>在你确认之前，对方无法进入你的账号。</strong>如果是你本人操作，请点击：</p>
+
+<p><a href="<%= @confirm_url %>"><%= @confirm_url %></a></p>
+
+<p>如果不是你本人操作，请点击拒绝：</p>
+
+<p><a href="<%= @reject_url %>"><%= @reject_url %></a></p>
+
+<p>链接有效期 24 小时。</p>

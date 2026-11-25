@@ -1,0 +1,92 @@
+# 只放非敏感的 provider 配置；client_id/secret 一律走环境变量（见 OauthClient）
+# verification_signal 说明：
+#   verified_flag      —— provider 明确给出布尔/字符串形式的验证标记
+#   verified_endpoint  —— 需另调接口，且只有“已验证的主邮箱”会被返回
+#   no_signal          —— 不提供任何验证状态（或不可信），一律按未验证处理
+google:
+  display_name: Google
+  adapter: GoogleAdapter
+  authorize_url: https://accounts.google.com/o/oauth2/v2/auth
+  token_url: https://oauth2.googleapis.com/token
+  userinfo_url: https://openidconnect.googleapis.com/v1/userinfo
+  jwks_url: https://www.googleapis.com/oauth2/v3/certs
+  scopes:
+    - openid
+    - email
+    - profile
+  verification_signal: verified_flag
+
+apple:
+  display_name: Apple
+  adapter: AppleAdapter
+  authorize_url: https://appleid.apple.com/auth/authorize
+  token_url: https://appleid.apple.com/auth/token
+  jwks_url: https://appleid.apple.com/auth/keys
+  scopes:
+    - openid
+    - email
+    - name
+  verification_signal: verified_flag
+
+github:
+  display_name: GitHub
+  adapter: GithubAdapter
+  authorize_url: https://github.com/login/oauth/authorize
+  token_url: https://github.com/login/oauth/access_token
+  emails_url: https://api.github.com/user/emails
+  user_url: https://api.github.com/user
+  scopes:
+    - user:email
+    - read:user
+  verification_signal: verified_endpoint
+
+facebook:
+  display_name: Facebook
+  adapter: FacebookAdapter
+  authorize_url: https://www.facebook.com/v18.0/dialog/oauth
+  token_url: https://graph.facebook.com/oauth/access_token
+  userinfo_url: https://graph.facebook.com/me
+  scopes:
+    - email
+    - public_profile
+  verification_signal: no_signal
+
+microsoft:
+  display_name: Microsoft
+  adapter: MicrosoftAdapter
+  authorize_url: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+  token_url: https://login.microsoftonline.com/common/oauth2/v2.0/token
+  jwks_url: https://login.microsoftonline.com/common/discovery/v2.0/keys
+  scopes:
+    - openid
+    - email
+    - profile
+  verification_signal: no_signal
+
+twitter:
+  display_name: Twitter
+  adapter: TwitterAdapter
+  authorize_url: https://twitter.com/i/oauth2/authorize
+  token_url: https://api.twitter.com/2/oauth2/token
+  userinfo_url: https://api.twitter.com/2/users/me
+  scopes:
+    - users.read
+    - tweet.read
+  verification_signal: no_signal
+
+linkedin:
+  display_name: LinkedIn
+  adapter: LinkedinAdapter
+  authorize_url: https://www.linkedin.com/oauth/v2/authorization
+  token_url: https://www.linkedin.com/oauth/v2/accessToken
+  userinfo_url: https://api.linkedin.com/v2/emailAddress
+  scopes:
+    - r_liteprofile
+    - r_emailaddress
+  verification_signal: no_signal
+
+# 任意兼容 OAuth2 的自建/小众平台：没有验证标记就一律按未验证处理
+generic_oauth2:
+  display_name: Generic OAuth2
+  adapter: GenericAdapter
+  verification_signal: no_signal

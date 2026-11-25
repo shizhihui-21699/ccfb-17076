@@ -16,3 +16,13 @@ node_modules/
 __pycache__/
 .venv/
 venv/
+
+# Rails 运行时产物
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+!/tmp/smoke_integration.rb
+/db/*.sqlite3
+/db/*.sqlite3-*
+/storage/*

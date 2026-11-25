@@ -1,0 +1,77 @@
+<div class="card">
+  <h2>账号设置</h2>
+  <p>邮箱：<strong><%= current_user.email %></strong>
+    <span class="tag <%= current_user.verified? ? 'verified' : 'unverified' %>">
+      站内邮箱<%= current_user.verified? ? '已验证' : '未验证' %>
+    </span>
+  </p>
+
+  <h3>已绑定的第三方身份</h3>
+  <table>
+    <tr><th>平台</th><th>UID</th><th>平台邮箱</th><th>邮箱验证状态</th><th>身份状态</th><th></th></tr>
+    <% @identities.each do |ident| %>
+      <tr>
+        <td><%= ident.provider %></td>
+        <td><%= ident.provider_uid %></td>
+        <td><%= ident.provider_email %></td>
+        <td><span class="tag <%= ident.email_verification %>"><%= ident.email_verification %></span></td>
+        <td><span class="tag <%= ident.status %>"><%= ident.status %></span>
+            <% if ident.quarantine_reason.present? %><div class="muted"><%= ident.quarantine_reason %></div><% end %></td>
+        <td>
+          <%= button_to '解绑', account_identity_path(ident.id), method: :delete,
+                        class: 'btn danger', data: { confirm: '确认解绑？' } %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <h3>绑定新的第三方身份</h3>
+  <p class="muted">绑定是你本人在已登录会话中确认的操作，不依赖平台邮箱验证状态。</p>
+  <% OAuth::ProviderRegistry.names.each do |p| %>
+    <%= link_to "绑定 #{Rails.configuration.x.oauth_providers[p][:display_name]}",
+                oauth_start_path(p, mode: 'link'), class: 'btn gray', style: 'margin:4px' %>
+  <% end %>
+
+  <h3 style="margin-top:28px">设置/修改密码</h3>
+  <%= form_with url: password_account_path, method: :post, local: true do |f| %>
+    <p><%= f.password_field :password, placeholder: '新密码（至少 8 位）' %>
+       <%= f.submit '保存密码', class: 'btn' %></p>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>待处理的合并请求</h3>
+  <% pending = @merge_requests.select { |m| m.status == 'pending' } %>
+  <% if pending.empty? %>
+    <p class="muted">暂无待处理请求。</p>
+  <% else %>
+    <table>
+      <tr><th>平台</th><th>对方邮箱</th><th>验证状态</th><th>时间</th><th>操作</th></tr>
+      <% pending.each do |mr| %>
+        <tr>
+          <td><%= mr.provider %></td>
+          <td><%= mr.provider_email %></td>
+          <td><span class="tag <%= mr.email_verification %>"><%= mr.email_verification %></span></td>
+          <td><%= mr.created_at %></td>
+          <td>
+            <%= button_to '确认合并', confirm_merge_request_account_path(mr.id),
+                          method: :post, class: 'btn' %>
+            <%= button_to '拒绝', reject_merge_request_account_path(mr.id),
+                          method: :post, class: 'btn danger' %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+
+  <h3>历史请求</h3>
+  <table>
+    <tr><th>平台</th><th>邮箱</th><th>验证状态</th><th>结果</th></tr>
+    <% @merge_requests.reject { |m| m.status == 'pending' }.each do |mr| %>
+      <tr>
+        <td><%= mr.provider %></td><td><%= mr.provider_email %></td>
+        <td><%= mr.email_verification %></td><td><%= mr.status %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>

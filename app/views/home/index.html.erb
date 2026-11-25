@@ -1,0 +1,26 @@
+<div class="card">
+  <h2>第三方登录</h2>
+  <p class="muted">
+    核心规则：只有 <code>(provider, uid)</code> 已绑定的身份才能直接登录；
+    邮箱相同<strong>不会</strong>自动合并，必须由站内账号持有人确认。
+    不提供邮箱验证状态的平台，其邮箱一律按“未验证”对待。
+  </p>
+  <% @providers.each do |p| %>
+    <p style="margin:10px 0">
+      <%= link_to "使用 #{Rails.configuration.x.oauth_providers[p][:display_name]} 登录",
+                  oauth_start_path(p), class: 'btn' %>
+      <span class="muted">
+        验证信号：<%= Rails.configuration.x.oauth_providers[p][:verification_signal] %>
+      </span>
+    </p>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>攻击场景复现入口</h3>
+  <p class="muted">
+    种子数据里，攻击者在“不验证邮箱”的 Facebook 上注册了受害者邮箱
+    <code>victim@example.com</code>。用该身份登录时，系统只会生成合并请求，
+    受害者账号不会被进入。
+  </p>
+</div>
